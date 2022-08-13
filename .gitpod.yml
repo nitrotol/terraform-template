@@ -1,0 +1,28 @@
+image: nitrotol/devops-gitpod:nightly-latest
+tasks:
+  - name: init project
+    init: |
+      if [ ! -f ./terraform ]; then
+        chmod +x ./install_terraform.sh
+        ./install_terraform.sh
+      fi
+    command: |
+      if [ -n "${INIT_GCP_PROJECT}" ]; then
+        gcloud auth login
+        gcloud auth application-default login
+      fi
+      if [ -f ./terraform ]; then
+        ./terraform init
+      fi
+ports:
+  - port: 3000
+    onOpen: ignore
+  - port: 5900
+    onOpen: ignore
+  - port: 6080
+    onOpen: notify
+vscode:
+  extensions:
+    - hashicorp.terraform
+    - ms-kubernetes-tools.vscode-kubernetes-tools
+    - ms-azuretools.vscode-docker
